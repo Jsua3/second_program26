@@ -1,0 +1,40 @@
+version: '3.8'
+
+services:
+  # Servicio de tu aplicación Spring Boot
+  app:
+    build: .
+    ports:
+      - "8080:8080"
+    environment:
+      # Configuración de Spring para conectar con el servicio 'db'
+      # IMPORTANTE: 'db' es el nombre del servicio de abajo, no uses localhost
+      SPRING_DATASOURCE_URL: jdbc:mysql://db:3306/quiz_db?allowPublicKeyRetrieval=true&useSSL=false
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: 1234
+      # Esto crea las tablas automáticamente basadas en tus entidades JPA
+      SPRING_JPA_HIBERNATE_DDL_AUTO: update
+    depends_on:
+      - db
+    networks:
+      - spring-net
+
+  # Servicio de Base de Datos MySQL
+  db:
+    image: mysql:8.0
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: 1234
+      MYSQL_DATABASE: quiz_db
+    ports:
+      - "3306:3306" # Para que puedas ver la BD desde tu IntelliJ o DBeaver
+    volumes:
+      - mysql_data:/var/lib/mysql # Para no perder los datos si apagas el contenedor
+    networks:
+      - spring-net
+
+volumes:
+  mysql_data:
+
+networks:
+  spring-net:
