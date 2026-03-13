@@ -1,0 +1,20 @@
+CREATE TABLE IF NOT EXISTS _user (
+    id SERIAL PRIMARY KEY,
+    username VARCHAR(255) UNIQUE NOT NULL,
+    password VARCHAR(255) NOT NULL,
+    role VARCHAR(50)
+);
+
+CREATE TABLE IF NOT EXISTS productos (
+    id SERIAL PRIMARY KEY,
+    nombre VARCHAR(255) NOT NULL,
+    precio DOUBLE PRECISION,
+    stock INTEGER
+);
+
+CREATE TABLE IF NOT EXISTS pedidos (
+    id SERIAL PRIMARY KEY,
+    descripcion VARCHAR(255),
+    total DOUBLE PRECISION,
+    estado VARCHAR(50)
+);
