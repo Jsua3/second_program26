@@ -1,14 +1,13 @@
-# Utiliza una imagen base de Eclipse Temurin (OpenJDK 17)
-FROM eclipse-temurin:17-jdk-focal
-
-# Establece el directorio de trabajo en /app
+# Fase de construcción
+FROM maven:3.8.4-openjdk-17-slim AS build
 WORKDIR /app
+COPY pom.xml .
+COPY src ./src
+RUN mvn clean package -DskipTests
 
-# Copia el archivo JAR de la aplicación al contenedor
-COPY target/app.jar app.jar
-
-# Expone el puerto en el que se ejecuta la aplicación
+# Fase de ejecución
+FROM eclipse-temurin:17-jdk-focal
+WORKDIR /app
+COPY --from=build /app/target/app.jar app.jar
 EXPOSE 8080
-
-# Comando para ejecutar la aplicación
 ENTRYPOINT ["java", "-jar", "app.jar"]

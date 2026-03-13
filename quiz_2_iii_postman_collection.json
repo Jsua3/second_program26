@@ -1,13 +1,13 @@
 {
 	"info": {
 		"_postman_id": "b3e3e3e3-1234-5678-9012-abcdef123456",
-		"name": "Quiz 2 III API (Con Admins)",
-		"description": "Colección actualizada con soporte para Roles (Admin/User)",
+		"name": "Quiz 2 III API (WebFlux + PostgreSQL)",
+		"description": "Colección actualizada para la versión reactiva con Spring WebFlux y PostgreSQL. Incluye manejo de roles y seguridad JWT.",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
 	"item": [
 		{
-			"name": "Auth (Usuarios)",
+			"name": "Auth",
 			"item": [
 				{
 					"name": "Register USER",
@@ -16,7 +16,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"username\": \"usuario1\",\n    \"password\": \"1234\",\n    \"nombre\": \"Juan Perez\",\n    \"role\": \"USER\"\n}",
+							"raw": "{\n    \"username\": \"user1\",\n    \"password\": \"1234\",\n    \"role\": \"USER\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -36,53 +36,6 @@
 					},
 					"response": []
 				},
-				{
-					"name": "Login USER",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"var jsonData = pm.response.json();",
-									"if (jsonData.token) {",
-									"    pm.collectionVariables.set(\"token\", jsonData.token);",
-									"    console.log(\"Token de USUARIO guardado\");",
-									"}"
-								],
-								"type": "text/javascript"
-							}
-						}
-					],
-					"request": {
-						"method": "POST",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n    \"username\": \"usuario1\",\n    \"password\": \"1234\"\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{baseUrl}}/auth/login",
-							"host": [
-								"{{baseUrl}}"
-							],
-							"path": [
-								"auth",
-								"login"
-							]
-						}
-					},
-					"response": []
-				}
-			]
-		},
-		{
-			"name": "Auth (ADMINS)",
-			"item": [
 				{
 					"name": "Register ADMIN",
 					"request": {
@@ -90,7 +43,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"username\": \"admin1\",\n    \"password\": \"1234\",\n    \"nombre\": \"Super Admin\",\n    \"role\": \"ADMIN\"\n}",
+							"raw": "{\n    \"username\": \"admin1\",\n    \"password\": \"1234\",\n    \"role\": \"ADMIN\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -111,7 +64,7 @@
 					"response": []
 				},
 				{
-					"name": "Login ADMIN",
+					"name": "Login",
 					"event": [
 						{
 							"listen": "test",
@@ -120,7 +73,7 @@
 									"var jsonData = pm.response.json();",
 									"if (jsonData.token) {",
 									"    pm.collectionVariables.set(\"token\", jsonData.token);",
-									"    console.log(\"Token de ADMIN guardado. Ya puedes crear productos.\");",
+									"    console.log(\"Token guardado correctamente.\");",
 									"}"
 								],
 								"type": "text/javascript"
@@ -155,40 +108,8 @@
 			]
 		},
 		{
-			"name": "Productos (Requiere Admin)",
+			"name": "Productos",
 			"item": [
-				{
-					"name": "Crear Producto",
-					"request": {
-						"method": "POST",
-						"header": [
-							{
-								"key": "Authorization",
-								"value": "Bearer {{token}}",
-								"type": "text"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n    \"nombre\": \"Monitor 4K\",\n    \"precio\": 3500.00,\n    \"stock\": 5\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{baseUrl}}/productos",
-							"host": [
-								"{{baseUrl}}"
-							],
-							"path": [
-								"productos"
-							]
-						}
-					},
-					"response": []
-				},
 				{
 					"name": "Listar Productos",
 					"request": {
@@ -201,12 +122,130 @@
 							}
 						],
 						"url": {
-							"raw": "{{baseUrl}}/productos",
+							"raw": "{{baseUrl}}/api/productos",
 							"host": [
 								"{{baseUrl}}"
 							],
 							"path": [
+								"api",
 								"productos"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Obtener Producto por ID",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/productos/1",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"productos",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Crear Producto (Solo ADMIN)",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"nombre\": \"Laptop Gaming\",\n    \"precio\": 1200.50,\n    \"stock\": 15\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/productos",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"productos"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Actualizar Producto (Solo ADMIN)",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"nombre\": \"Laptop Gaming Pro\",\n    \"precio\": 1500.00,\n    \"stock\": 10\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/productos/1",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"productos",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Eliminar Producto (Solo ADMIN)",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/productos/1",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"productos",
+								"1"
 							]
 						}
 					},
@@ -215,8 +254,32 @@
 			]
 		},
 		{
-			"name": "Pedidos",
+			"name": "Pedidos (Solo ADMIN)",
 			"item": [
+				{
+					"name": "Listar Pedidos",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/pedidos",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"pedidos"
+							]
+						}
+					},
+					"response": []
+				},
 				{
 					"name": "Crear Pedido",
 					"request": {
@@ -230,7 +293,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"productoId\": 1,\n    \"cantidad\": 2\n}",
+							"raw": "{\n    \"descripcion\": \"Pedido de prueba\",\n    \"total\": 2500.00,\n    \"estado\": \"PENDIENTE\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -238,12 +301,72 @@
 							}
 						},
 						"url": {
-							"raw": "{{baseUrl}}/pedidos",
+							"raw": "{{baseUrl}}/api/pedidos",
 							"host": [
 								"{{baseUrl}}"
 							],
 							"path": [
+								"api",
 								"pedidos"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Actualizar Pedido",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"descripcion\": \"Pedido de prueba actualizado\",\n    \"total\": 2600.00,\n    \"estado\": \"COMPLETADO\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/pedidos/1",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"pedidos",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Eliminar Pedido",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/pedidos/1",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"pedidos",
+								"1"
 							]
 						}
 					},
