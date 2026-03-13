@@ -1,4 +1,4 @@
-package com.example.quiz_2_iii.config; // Ajusta el paquete si lo pusiste en otro lado
+package quiz_2_iii.config; // Ajusta el paquete si lo pusiste en otro lado
 
 import io.r2dbc.spi.ConnectionFactory;
 import org.springframework.context.annotation.Bean;
